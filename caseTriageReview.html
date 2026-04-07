@@ -1,0 +1,239 @@
+<template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         PENDING — action required
+    ══════════════════════════════════════════════════════════ -->
+    <template lwc:if={showPending}>
+        <lightning-card>
+            <div slot="title" class="card-title">
+                <lightning-icon icon-name="utility:einstein" size="x-small" class="icon-einstein"></lightning-icon>
+                <span class="slds-m-left_x-small">Gate 0 — Pending Review</span>
+            </div>
+
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                <template lwc:if={isLoading}>
+                    <div class="spinner-container">
+                        <lightning-spinner alternative-text="Processing..." size="small"></lightning-spinner>
+                    </div>
+                </template>
+
+                <!-- Classification + Confidence -->
+                <div class="badge-row slds-m-bottom_small">
+                    <span class={classificationBadgeClass}>{classificationLabel}</span>
+                    <span class={confidenceBadgeClass}>{confidence}</span>
+                </div>
+
+                <!-- Type / Subtype chips — side by side -->
+                <div class="chip-row slds-m-bottom_small">
+                    <div class="chip-group">
+                        <p class={sectionLabelClass}>Type</p>
+                        <span class="value-chip">{recommendedType}</span>
+                    </div>
+                    <div class="chip-group">
+                        <p class={sectionLabelClass}>Subtype</p>
+                        <span class="value-chip value-chip-subtype">{recommendedSubType}</span>
+                    </div>
+                </div>
+
+                <div class="divider slds-m-vertical_small"></div>
+
+                <!-- AI Rationale -->
+                <div class="slds-m-bottom_small">
+                    <p class={sectionLabelClass}>AI Rationale</p>
+                    <p class={detailTextClass}>{rationale}</p>
+                </div>
+
+                <!-- Signals — always all 5, missing ones shown as Not triggered -->
+                <template lwc:if={hasSignalData}>
+                    <div class="slds-m-bottom_medium">
+                        <p class={sectionLabelClass}>Signals Detected</p>
+                        <ul class="signal-list">
+                            <template for:each={allSignals} for:item="sig">
+                                <li key={sig.id} class={sig.itemClass}>
+                                    <div class="signal-header">
+                                        <span class="signal-label">{sig.label}</span>
+                                        <span class="signal-name"> — {sig.name} — </span>
+                                        <strong class={sig.resultClass}>{sig.result}</strong>
+                                    </div>
+                                    <template lwc:if={sig.description}>
+                                        <div class="signal-desc-line">
+                                            <span class="signal-desc">{sig.description}</span>
+                                        </div>
+                                    </template>
+                                    <template lwc:else>
+                                        <div class="signal-desc-line">
+                                            <span class="signal-def-text">{sig.signalDef}</span>
+                                        </div>
+                                    </template>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+
+                <!-- Override form -->
+                <template lwc:if={showOverrideForm}>
+                    <div class="override-form slds-m-bottom_medium">
+                        <lightning-combobox
+                            label="Reason for Override"
+                            value={overrideReasonValue}
+                            options={overrideReasonOptions}
+                            placeholder="Select a reason..."
+                            onchange={handleOverrideReasonChange}
+                            class="slds-m-bottom_x-small"
+                            required>
+                        </lightning-combobox>
+                        <lightning-combobox
+                            label="Classification"
+                            value={overrideClassificationValue}
+                            options={classificationOptions}
+                            onchange={handleOverrideClassificationChange}
+                            class="slds-m-bottom_x-small">
+                        </lightning-combobox>
+                        <lightning-combobox
+                            label="Type"
+                            value={overrideTypeValue}
+                            options={typeOptions}
+                            onchange={handleOverrideTypeChange}
+                            class="slds-m-bottom_x-small">
+                        </lightning-combobox>
+                        <lightning-combobox
+                            label="Subtype"
+                            value={overrideSubTypeValue}
+                            options={subTypeOptions}
+                            onchange={handleOverrideSubTypeChange}
+                            class="slds-m-bottom_x-small">
+                        </lightning-combobox>
+                        <lightning-textarea
+                            label="Notes (optional)"
+                            value={overrideNotesValue}
+                            onchange={handleOverrideNotesChange}
+                            max-length="255"
+                            placeholder="Any additional context..."
+                            class="slds-m-bottom_small">
+                        </lightning-textarea>
+                        <div class="button-row">
+                            <lightning-button
+                                label="Cancel"
+                                onclick={handleCancelOverride}>
+                            </lightning-button>
+                            <lightning-button
+                                variant="brand"
+                                label="Apply Override"
+                                disabled={overrideReasonMissing}
+                                onclick={handleApplyOverride}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Primary action buttons -->
+                <template lwc:else>
+                    <div class="button-row">
+                        <lightning-button
+                            variant="brand"
+                            label={confirmButtonLabel}
+                            onclick={handleConfirm}
+                            class="grow-btn">
+                        </lightning-button>
+                        <lightning-button
+                            label="Override"
+                            onclick={handleOverride}>
+                        </lightning-button>
+                    </div>
+                </template>
+
+            </div>
+        </lightning-card>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         REVIEWED — compact summary with expandable details
+    ══════════════════════════════════════════════════════════ -->
+    <template lwc:if={showReviewed}>
+        <lightning-card>
+            <div slot="title" class="card-title">
+                <lightning-icon icon-name="utility:check" size="x-small" class="icon-check"></lightning-icon>
+                <span class="slds-m-left_x-small">Triage Complete</span>
+            </div>
+
+            <!-- Always-visible summary -->
+            <div class="slds-p-horizontal_medium slds-p-bottom_small">
+                <div class="badge-row slds-m-bottom_x-small">
+                    <span class={classificationBadgeClass}>{classificationLabel}</span>
+                    <span class={confidenceBadgeClass}>{confidence}</span>
+                </div>
+                <p class={outcomeTextClass}>{outcomeLabel}</p>
+                <button class="accordion-toggle" onclick={handleToggleExpanded}>
+                    <span>{accordionToggleLabel}</span>
+                    <lightning-icon icon-name={accordionIcon} size="xx-small" class="slds-m-left_xx-small"></lightning-icon>
+                </button>
+            </div>
+
+            <!-- Expandable details (read-only) -->
+            <template lwc:if={isExpanded}>
+                <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                    <div class="divider slds-m-bottom_small"></div>
+
+                    <!-- Type / Subtype chips — side by side -->
+                    <div class="chip-row slds-m-bottom_small">
+                        <div class="chip-group">
+                            <p class={sectionLabelClass}>Type</p>
+                            <span class="value-chip">{recommendedType}</span>
+                        </div>
+                        <div class="chip-group">
+                            <p class={sectionLabelClass}>Subtype</p>
+                            <span class="value-chip value-chip-subtype">{recommendedSubType}</span>
+                        </div>
+                    </div>
+
+                    <div class="divider slds-m-vertical_small"></div>
+
+                    <!-- AI Rationale -->
+                    <div class="slds-m-bottom_small">
+                        <p class={sectionLabelClass}>AI Rationale</p>
+                        <p class={detailTextClass}>{rationale}</p>
+                    </div>
+
+                    <!-- Signals -->
+                    <template lwc:if={hasSignalData}>
+                        <div class="slds-m-bottom_small">
+                            <p class={sectionLabelClass}>Signals Detected</p>
+                            <ul class="signal-list">
+                                <template for:each={allSignals} for:item="sig">
+                                    <li key={sig.id} class={sig.itemClass}>
+                                        <div class="signal-header">
+                                            <span class="signal-label">{sig.label}</span>
+                                            <span class="signal-name"> — {sig.name} — </span>
+                                            <strong class={sig.resultClass}>{sig.result}</strong>
+                                        </div>
+                                        <template lwc:if={sig.description}>
+                                            <div class="signal-desc-line">
+                                                <span class="signal-desc">{sig.description}</span>
+                                            </div>
+                                        </template>
+                                        <template lwc:else>
+                                            <div class="signal-desc-line">
+                                                <span class="signal-def-text">{sig.signalDef}</span>
+                                            </div>
+                                        </template>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </template>
+
+                    <!-- Triage attribution -->
+                    <div class="triage-attribution">
+                        <lightning-icon icon-name="utility:clock" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                        Triaged {triageReviewedAt}
+                    </div>
+                </div>
+            </template>
+
+        </lightning-card>
+    </template>
+
+</template>
