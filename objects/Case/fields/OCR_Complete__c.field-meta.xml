@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OCR_Complete__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Set to true by the OCR process when attachment text extraction is complete. Triggers Gate 1 order detail extraction flow.</description>
+    <externalId>false</externalId>
+    <label>OCR Complete</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

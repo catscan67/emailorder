@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Classification_Result__c</fullName>
+    <label>Classification Result</label>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Sales_Order</fullName>
+                <default>false</default>
+                <label>Sales Order</label>
+            </value>
+            <value>
+                <fullName>General</fullName>
+                <default>false</default>
+                <label>General</label>
+            </value>
+            <value>
+                <fullName>Ambiguous</fullName>
+                <default>false</default>
+                <label>Ambiguous</label>
+            </value>
+            <value>
+                <fullName>Noise</fullName>
+                <default>false</default>
+                <label>Noise</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

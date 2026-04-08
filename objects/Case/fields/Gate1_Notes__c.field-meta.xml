@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gate1_Notes__c</fullName>
+    <description>Notes from the Gate 1 extraction — either AI extraction notes/confidence from the prompt, or the reason manual review is required (unsupported file types, multiple attachments).</description>
+    <externalId>false</externalId>
+    <label>Gate 1 Notes</label>
+    <length>32768</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>LongTextArea</type>
+    <visibleLines>4</visibleLines>
+</CustomField>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Override_Reason__c</fullName>
+    <label>Override Reason</label>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Email intent misread</fullName>
+                <default>false</default>
+                <label>Email intent misread</label>
+            </value>
+            <value>
+                <fullName>Attachment not detected by AI</fullName>
+                <default>false</default>
+                <label>Attachment not detected by AI</label>
+            </value>
+            <value>
+                <fullName>Known procurement system / sender</fullName>
+                <default>false</default>
+                <label>Known procurement system / sender</label>
+            </value>
+            <value>
+                <fullName>Duplicate — PO already received</fullName>
+                <default>false</default>
+                <label>Duplicate — PO already received</label>
+            </value>
+            <value>
+                <fullName>Not an order — sent in error</fullName>
+                <default>false</default>
+                <label>Not an order — sent in error</label>
+            </value>
+            <value>
+                <fullName>NAF misclassified as order</fullName>
+                <default>false</default>
+                <label>NAF misclassified as order</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
