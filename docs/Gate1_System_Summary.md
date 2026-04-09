@@ -167,6 +167,35 @@ The manual review message written to `Gate1_Notes__c` specifies the reason:
 
 ---
 
+## LWC: orderReview
+
+**API Name:** `orderReview`  
+**Type:** Lightning Web Component  
+**Controller:** `Gate1ReviewController` (Apex)  
+**Placed on:** Case record page (Lightning App Builder)
+
+The component wires to `Gate1_Status__c` and renders one of three states:
+
+| Status | What the rep sees |
+|---|---|
+| `Pending Review` | Extracted values displayed read-only, with **Confirm & Complete**, **Edit**, and **Dismiss** buttons |
+| `Manual Review Required` | Warning banner with the reason from `Gate1_Notes__c`, editable fields (Shipping Preference required, Attention To, Ship To Address), plus **Save & Complete** and **Dismiss** buttons |
+| `Completed` | Compact collapsed summary (Shipping Preference badge + Attention To chip) with a **View details** toggle |
+
+### Dismiss / Reopen
+
+Both the `Pending Review` and `Manual Review Required` states include a **Dismiss** button. Dismissing collapses the card to a slim banner — the label and a **Review** button — so the rep can switch gears without the form blocking their view. The `Gate1_Status__c` value is unchanged; clicking **Review** restores the full card. The dismissed state is session-only (page refresh resets it).
+
+### Confirm & Complete (Pending Review)
+
+Calls `Gate1ReviewController.confirmOrderDetails`, which sets `Gate1_Status__c = 'Completed'` without modifying any extracted field values.
+
+### Save & Complete (Edit / Manual Review)
+
+Calls `Gate1ReviewController.saveOrderDetails`, which updates `Shipping_Preference__c`, `Attention_To__c`, `Ship_To_Address__c`, and sets `Gate1_Status__c = 'Completed'` in a single DML operation.
+
+---
+
 ## Design Decisions
 
 **Why a Record-Triggered Flow instead of an Agent?**  
