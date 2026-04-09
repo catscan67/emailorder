@@ -15,7 +15,7 @@ const FIELDS = [
     GATE1_STATUS, GATE1_NOTES, SHIPPING_PREFERENCE, ATTENTION_TO, SHIP_TO_ADDRESS
 ];
 
-export default class Gate1OrderReview extends LightningElement {
+export default class OrderReview extends LightningElement {
     @api recordId;
     /** Admin-configurable font size: Small | Medium | Large */
     @api fontSize = 'Small';
