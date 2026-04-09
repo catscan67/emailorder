@@ -192,6 +192,12 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <field>Gate1_Status__c</field>
+            <value>
+                <stringValue>Pending Review</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>Ship_To_Address__c</field>
             <value>
                 <elementReference>Review_Sales_Order.structuredResponse.shipToAddress</elementReference>
@@ -214,6 +220,12 @@
             <field>Attention_To__c</field>
             <value>
                 <elementReference>Extract_Case_PDF_Details.structuredResponse.attentionTo</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Gate1_Status__c</field>
+            <value>
+                <stringValue>Pending Review</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
