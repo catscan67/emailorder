@@ -39,6 +39,19 @@ The agent picks up the Case ID automatically from `currentRecordId` — the rep 
 | Language | en_US, en_GB |
 | Script File | `docs/Service_Team_Agent.agentscript` |
 
+## Access / Permission Set
+
+Users must be assigned the **AEA Service Team Agent** permission set (`AEA_Service_Team_Agent`) to access the agent.
+
+| Property | Value |
+|---|---|
+| Permission Set Label | AEA Service Team Agent |
+| API Name | `AEA_Service_Team_Agent` |
+| Grants | `agentAccess` to `Service_Team_Agent` |
+| Metadata | `force-app/main/default/permissionsets/AEA_Service_Team_Agent.permissionset-meta.xml` |
+
+To assign: Setup → Permission Sets → AEA Service Team Agent → Manage Assignments.
+
 ---
 
 ## Topics
