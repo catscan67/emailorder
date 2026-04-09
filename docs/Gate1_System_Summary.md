@@ -161,6 +161,8 @@ The manual review message written to `Gate1_Notes__c` specifies the reason:
 | Attachment check subflow | `Case_Check_Attachment_Types` | Flow |
 | Prompt template | `Review_Sales_Order_Details` | GenAiPromptTemplate |
 | Lightning Type | `Sales Order Values` | Response structure schema |
+| LWC — rep review panel | `orderReview` | LightningComponentBundle |
+| Apex controller for LWC | `Gate1ReviewController` | ApexClass |
 | Apex class (fallback) | `Gate1OrderExtractor` | ApexClass |
 
 ---
