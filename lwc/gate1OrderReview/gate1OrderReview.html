@@ -1,0 +1,236 @@
+<template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         PENDING REVIEW — AI extracted values, awaiting rep confirmation
+    ══════════════════════════════════════════════════════════ -->
+    <template lwc:if={showPending}>
+        <lightning-card>
+            <div slot="title" class="card-title">
+                <lightning-icon icon-name="utility:einstein" size="x-small" class="icon-einstein"></lightning-icon>
+                <span class="slds-m-left_x-small">Gate 1 — Order Details Extracted</span>
+            </div>
+
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                <template lwc:if={isLoading}>
+                    <div class="spinner-container">
+                        <lightning-spinner alternative-text="Saving..." size="small"></lightning-spinner>
+                    </div>
+                </template>
+
+                <!-- Shipping preference badge -->
+                <div class="badge-row slds-m-bottom_small">
+                    <span class={shippingBadgeClass}>{shippingPreference}</span>
+                    <span class="source-label">AI Extracted</span>
+                </div>
+
+                <!-- Extracted field values (read-only view) -->
+                <template lwc:if={showReadOnly}>
+                    <div class="field-block slds-m-bottom_small">
+                        <p class={sectionLabelClass}>Shipping Preference</p>
+                        <p class={detailTextClass}>{shippingPreference}</p>
+                    </div>
+
+                    <template lwc:if={attentionTo}>
+                        <div class="field-block slds-m-bottom_small">
+                            <p class={sectionLabelClass}>Attention To</p>
+                            <p class={detailTextClass}>{attentionTo}</p>
+                        </div>
+                    </template>
+
+                    <template lwc:if={shipToAddress}>
+                        <div class="field-block slds-m-bottom_small">
+                            <p class={sectionLabelClass}>Ship To Address</p>
+                            <p class={detailTextClass}>{shipToAddress}</p>
+                        </div>
+                    </template>
+
+                    <template lwc:if={gate1Notes}>
+                        <div class="field-block slds-m-bottom_small">
+                            <p class={sectionLabelClass}>AI Notes</p>
+                            <p class="notes-text">{gate1Notes}</p>
+                        </div>
+                    </template>
+
+                    <div class="divider slds-m-vertical_small"></div>
+
+                    <div class="button-row">
+                        <lightning-button
+                            variant="brand"
+                            label="Confirm &amp; Complete"
+                            onclick={handleConfirm}
+                            class="grow-btn">
+                        </lightning-button>
+                        <lightning-button
+                            label="Edit"
+                            onclick={handleEdit}>
+                        </lightning-button>
+                    </div>
+                </template>
+
+                <!-- Edit form -->
+                <template lwc:if={showEditForm}>
+                    <div class="edit-form slds-m-bottom_small">
+                        <lightning-combobox
+                            label="Shipping Preference"
+                            value={editShippingPreference}
+                            options={shippingOptions}
+                            onchange={handleShippingChange}
+                            class="slds-m-bottom_x-small"
+                            required>
+                        </lightning-combobox>
+                        <lightning-input
+                            label="Attention To"
+                            value={editAttentionTo}
+                            onchange={handleAttentionToChange}
+                            max-length="255"
+                            class="slds-m-bottom_x-small">
+                        </lightning-input>
+                        <lightning-textarea
+                            label="Ship To Address"
+                            value={editShipToAddress}
+                            onchange={handleShipToAddressChange}
+                            class="slds-m-bottom_small">
+                        </lightning-textarea>
+                        <div class="button-row">
+                            <lightning-button
+                                label="Cancel"
+                                onclick={handleCancelEdit}>
+                            </lightning-button>
+                            <lightning-button
+                                variant="brand"
+                                label="Save &amp; Confirm"
+                                onclick={handleSave}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </lightning-card>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         MANUAL REVIEW REQUIRED — prompt blocked, rep must fill in
+    ══════════════════════════════════════════════════════════ -->
+    <template lwc:if={showManualReview}>
+        <lightning-card>
+            <div slot="title" class="card-title">
+                <lightning-icon icon-name="utility:warning" size="x-small" class="icon-warning"></lightning-icon>
+                <span class="slds-m-left_x-small">Gate 1 — Manual Review Required</span>
+            </div>
+
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                <template lwc:if={isLoading}>
+                    <div class="spinner-container">
+                        <lightning-spinner alternative-text="Saving..." size="small"></lightning-spinner>
+                    </div>
+                </template>
+
+                <!-- Reason banner -->
+                <div class="manual-reason slds-m-bottom_medium">
+                    <lightning-icon icon-name="utility:info" size="xx-small" class="slds-m-right_xx-small icon-info"></lightning-icon>
+                    <span class={detailTextClass}>{gate1Notes}</span>
+                </div>
+
+                <div class="divider slds-m-bottom_medium"></div>
+
+                <!-- Rep fills in the fields manually -->
+                <lightning-combobox
+                    label="Shipping Preference"
+                    value={editShippingPreference}
+                    options={shippingOptions}
+                    onchange={handleShippingChange}
+                    class="slds-m-bottom_x-small"
+                    required>
+                </lightning-combobox>
+                <lightning-input
+                    label="Attention To"
+                    value={editAttentionTo}
+                    onchange={handleAttentionToChange}
+                    max-length="255"
+                    class="slds-m-bottom_x-small">
+                </lightning-input>
+                <lightning-textarea
+                    label="Ship To Address"
+                    value={editShipToAddress}
+                    onchange={handleShipToAddressChange}
+                    class="slds-m-bottom_small">
+                </lightning-textarea>
+
+                <div class="button-row">
+                    <lightning-button
+                        variant="brand"
+                        label="Save &amp; Complete"
+                        disabled={saveDisabled}
+                        onclick={handleSave}
+                        class="grow-btn">
+                    </lightning-button>
+                </div>
+
+            </div>
+        </lightning-card>
+    </template>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         COMPLETED — compact summary, expandable
+    ══════════════════════════════════════════════════════════ -->
+    <template lwc:if={showCompleted}>
+        <lightning-card>
+            <div slot="title" class="card-title">
+                <lightning-icon icon-name="utility:check" size="x-small" class="icon-check"></lightning-icon>
+                <span class="slds-m-left_x-small">Order Details Confirmed</span>
+            </div>
+
+            <div class="slds-p-horizontal_medium slds-p-bottom_small">
+                <div class="badge-row slds-m-bottom_x-small">
+                    <span class={shippingBadgeClass}>{shippingPreference}</span>
+                    <template lwc:if={attentionTo}>
+                        <span class="attn-chip">Attn: {attentionTo}</span>
+                    </template>
+                </div>
+                <button class="accordion-toggle" onclick={handleToggleExpanded}>
+                    <span>{accordionToggleLabel}</span>
+                    <lightning-icon icon-name={accordionIcon} size="xx-small" class="slds-m-left_xx-small"></lightning-icon>
+                </button>
+            </div>
+
+            <template lwc:if={isExpanded}>
+                <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                    <div class="divider slds-m-bottom_small"></div>
+
+                    <div class="field-block slds-m-bottom_small">
+                        <p class={sectionLabelClass}>Shipping Preference</p>
+                        <p class={detailTextClass}>{shippingPreference}</p>
+                    </div>
+
+                    <template lwc:if={attentionTo}>
+                        <div class="field-block slds-m-bottom_small">
+                            <p class={sectionLabelClass}>Attention To</p>
+                            <p class={detailTextClass}>{attentionTo}</p>
+                        </div>
+                    </template>
+
+                    <template lwc:if={shipToAddress}>
+                        <div class="field-block slds-m-bottom_small">
+                            <p class={sectionLabelClass}>Ship To Address</p>
+                            <p class={detailTextClass}>{shipToAddress}</p>
+                        </div>
+                    </template>
+
+                    <template lwc:if={gate1Notes}>
+                        <div class="field-block slds-m-bottom_small">
+                            <p class={sectionLabelClass}>Notes</p>
+                            <p class="notes-text">{gate1Notes}</p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+        </lightning-card>
+    </template>
+
+</template>
